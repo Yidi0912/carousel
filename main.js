@@ -1,49 +1,40 @@
-// var script = document.createElement('script');
-// script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js';
-// script.type = 'text/javascript';
-// document.getElementsByTagName('head')[0].appendChild(script);
-
-var allButtons = $('#buttons > span')
-console.log(allButtons)
-
-for (let i = 0; i < allButtons.length; i++) {
-  $(allButtons[i]).on('click', function(x) {
-    var index = $(x.currentTarget).index()
-    var p = index * -300
-    $('#images').css({
-      transform: 'translate(' + p + 'px)'
+let n
+初始化()
+setInterval(() => {
+  makeLeave(getImage(n))
+    .one('transitionend', (e) => {
+      makeEnter($(e.currentTarget))
     })
-    n = index
-    activeButton(allButtons.eq(n))
-  })
+  makeCurrent(getImage(n + 1))
+  n += 1
+}, 3000)
+
+function getImage(n) {
+  return $(`.images > img:nth-child(${x(n)})`)
 }
 
-
-
-var n = 0;
-var size = allButtons.length
-allButtons.eq(n % size).trigger('click')
-
-
-var timerId = setTimer()
-
-function setTimer() {
-  return setInterval(() => {
-    n += 1
-    allButtons.eq(n % size).trigger('click')
-  }, 3000)
+function x(n) {
+  if (n > 3) {
+    n = n % 3
+    if (n === 0) {
+      n = 3
+    }
+  } // n = 1 2 3
+  return n
 }
 
-function activeButton($button) {
-  $button
-    .addClass('red')
-    .siblings('.red').removeClass('red')
+function 初始化() {
+  n = 1
+  $(`.images > img:nth-child(${n})`).addClass('current')
+    .siblings().addClass('enter')
 }
 
-$('.window').on('mouseenter', function() {
-  window.clearInterval(timerId)
-})
-
-$('.window').on('mouseleave', function() {
-  timerId = setTimer()
-})
+function makeCurrent($node) {
+  return $node.removeClass('enter leave').addClass('current')
+}
+function makeLeave($node) {
+  return $node.removeClass('enter current').addClass('leave')
+}
+function makeEnter($node) {
+  return $node.removeClass('leave current').addClass('enter')
+}
